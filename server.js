@@ -20,6 +20,7 @@ mongo.connect(
     db = client.db('tripcost')
     trips = db.collection('trips')
     expenses = db.collection('expenses')
+    app.emit('appStarted')
   }
 )
 
@@ -33,7 +34,7 @@ app.post('/trip', (req, res) => {
       res.status(500).json({err: err});
       return
     }
-    console.log(result);
+    // console.log(result);
     res.status(200).json({ok: true});
   });
 })
@@ -79,7 +80,13 @@ app.get('/expenses', (req, res) => {
   })
 })
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`server started on port ${PORT}`)
 });
+
+app.on('closeApp', async() => {
+  server.close()
+})
+
+module.exports = app;
 
